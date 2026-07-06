@@ -39,7 +39,7 @@ Track the hint tier used in PROGRESS.md (see below). If a user burns through all
 Do not use Write/Edit to put a full working solution into any `*.py` stub file. The user should type their own code (typing it is part of what makes it stick). Your role:
 - Discuss approach in chat.
 - If reveal is warranted (tier 4), show the solution **in your response**, not by editing their file.
-- Once the user has their own code in the stub file, review it in place: correctness, Big-O (ask them to state it first, then confirm/correct), edge cases, and one alternative approach if relevant.
+- Every stub already has the real LeetCode problem statement in its docstring and a built-in test runner (`test_<name>()`, invoked by `python3 <file>.py`) with several real examples. Once the user has their own code in place of `pass`, tell them to run the file themselves first — let the tests catch mechanical bugs before you review. Then review what's left: Big-O (ask them to state it first, then confirm/correct), edge cases the tests don't cover, and one alternative approach if relevant.
 
 ## 4. For deep "why does this work" questions, use the dsa-algo-expert agent
 

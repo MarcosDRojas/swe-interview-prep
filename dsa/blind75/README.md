@@ -11,6 +11,24 @@ Note: a few problems test more than one technique and are listed under multiple 
 - **For deeper "why does this work" questions**, ask to bring in the `dsa-algo-expert` subagent — it specializes in teaching the general technique without solving your current problem for you.
 - [PROGRESS.md](PROGRESS.md) is the single source of truth for what's solved, what's in progress, and what's queued next. See also: [data-structures-review.md](../data-structures-review.md) for a standalone refresher on core data structures and their Big-O, independent of any specific problem.
 
+## Running a problem
+
+Every stub is a real, standalone LeetCode problem — pulled from LeetCode itself, not paraphrased — and doubles as its own test runner:
+
+```
+python3 dsa/blind75/01-array-and-hashing/two_sum.py
+```
+
+Each file has three parts:
+
+1. **A docstring** with the real problem statement, examples, constraints, LeetCode link, and a time/space complexity target to aim for.
+2. **The function (or class) stub** — write your solution directly in place of `pass`.
+3. **A built-in test runner** (`test_<name>()`, called automatically when you run the file) that checks your solution against several real LeetCode examples and prints `[PASS]`/`[FAIL]` per case.
+
+No pytest, no imports between files, no setup — `python3 <file>.py` is the whole workflow. Re-run it after every change.
+
+The 3 LeetCode-Premium problems ([13-graphs](13-graphs/README.md): Graph Valid Tree, Number of Connected Components, Alien Dictionary) have hand-written descriptions since their official pages aren't public — noted in each docstring.
+
 ## 01. Array & Hashing ([concept overview](01-array-and-hashing/README.md))
 - [ ] [Two Sum](01-array-and-hashing/two_sum.py)
 - [ ] [Contains Duplicate](01-array-and-hashing/contains_duplicate.py)
