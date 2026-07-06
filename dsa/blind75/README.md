@@ -6,9 +6,9 @@ Note: a few problems test more than one technique and are listed under multiple 
 
 ## How to use this folder
 
-- **Don't just start editing a stub file.** Run the `/practice` skill — it reads [PROGRESS.md](PROGRESS.md) to pick up exactly where you left off, runs the session like a real interview (clarify → brute force → hints only on request), and updates your progress automatically. It will not hand you a full solution unless you explicitly ask for it.
+- **Don't just start editing a stub file.** Run the `/practice` skill — it reads [PROGRESS.md](PROGRESS.md) to pick up exactly where you left off, then hands the session to the `interviewer` persona (clarify → brute force → hints only on request → follow-ups), and updates your progress automatically. It will not hand you a full solution unless you explicitly ask for it.
 - **Read the category README before attempting its problems.** Each category folder (e.g. [01-array-and-hashing/README.md](01-array-and-hashing/README.md)) explains the underlying pattern, gives a complexity cheat sheet, and lists common pitfalls — this is concept knowledge, not spoilers for specific problems.
-- **For deeper "why does this work" questions**, ask to bring in the `dsa-algo-expert` subagent — it specializes in teaching the general technique without solving your current problem for you.
+- **For deeper "why does this work" questions**, ask to bring in the `dsa-algo-expert` agent — it only teaches the general technique, it never runs the interview or picks questions. The `interviewer` agent is the reverse: it only runs the session and question bank, it never lectures on concepts.
 - [PROGRESS.md](PROGRESS.md) is the single source of truth for what's solved, what's in progress, and what's queued next. See also: [data-structures-review.md](../data-structures-review.md) for a standalone refresher on core data structures and their Big-O, independent of any specific problem.
 
 ## Running a problem

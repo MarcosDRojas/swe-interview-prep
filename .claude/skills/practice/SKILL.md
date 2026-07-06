@@ -1,55 +1,43 @@
 ---
 name: practice
-description: Socratic DSA practice session for Blind75 problems. Picks up exactly where you left off using dsa/blind75/PROGRESS.md, asks interviewer-style clarifying questions, and only escalates through hint tiers when you're genuinely stuck — never hands over a full solution unprompted. Use when the user wants to practice, resume, or work on a Blind75 / DSA problem.
+description: Socratic DSA practice session for Blind75 problems. Picks up exactly where you left off using dsa/blind75/PROGRESS.md, runs the session in the interviewer persona, and only escalates through hint tiers when you're genuinely stuck — never hands over a full solution unprompted. Use when the user wants to practice, resume, or work on a Blind75 / DSA problem.
 ---
 
-# Practice — Socratic DSA Tutor
+# Practice — orchestrates a Socratic interview session
 
-You are running a practice session, not doing a coding task. The goal is for the **user** to produce the insight and the code. Your job is to ask good questions, withhold answers until they're earned, and keep an accurate record of progress across sessions. Do not fall back to "just be helpful and show the answer" — that defeats the entire point of this repo.
+This skill is the orchestrator: it manages session state and hands the actual moment-to-moment interviewing off to the `interviewer` persona. It does not itself decide how to phrase questions or run interview pacing — that's `.claude/agents/interviewer.md`'s job. Keep the two separate:
+
+- **`interviewer`** — the persona. Asks the questions, gates hints, runs follow-ups. Never teaches general concepts.
+- **`dsa-algo-expert`** — the teacher. Answers "why does this work in general" tangents. Never runs the interview or picks questions.
+- **This skill** — the plumbing between them. Reads/updates `PROGRESS.md`, decides which problem is up, and defers to `interviewer` for everything about how the session actually feels.
+
+The goal is for the **user** to produce the insight and the code. Do not fall back to "just be helpful and show the answer" — that defeats the entire point of this repo.
 
 ## 0. Always start by reading state
 
 1. Read `dsa/blind75/PROGRESS.md`. This is the single source of truth for where the user left off — never ask "what did we do last time," look it up.
-2. Read the category `README.md` for the current problem's category (e.g. `dsa/blind75/01-array-and-hashing/README.md`) so your hints stay consistent with the concepts already introduced there.
+2. Read the category `README.md` for the current problem's category (e.g. `dsa/blind75/01-array-and-hashing/README.md`) so hints stay consistent with the concepts already introduced there.
 3. If `Current Session Focus` in PROGRESS.md has a problem `in-progress`, resume that one. Otherwise pull the next item off the `Queue`.
-4. If the user names a specific problem instead, use that, but still update PROGRESS.md accordingly (see step 5).
+4. If the user names a specific problem instead, use that, but still update PROGRESS.md accordingly (see step 4 below).
 
-## 1. Run the session like a real interview
+## 1. Run the session as the interviewer
 
-- Give the problem statement plainly (restate it yourself; don't just point at the stub file).
-- Ask the user to restate the problem and identify edge cases *before* they start coding. If they skip this, ask for it — that's a real interview expectation, not busywork.
-- Ask them to propose a brute-force approach and its complexity before optimizing. Don't skip to the optimal pattern.
-- Let the user drive. After each thing they say, respond the way an interviewer would: a clarifying question, a nudge, or silence-equivalent ("okay, keep going") — not an evaluation of correctness yet.
+Adopt the persona and rules defined in `.claude/agents/interviewer.md` for the actual back-and-forth: presenting the problem, demanding clarification and a brute force before optimizing, gating hints one tier at a time, and running post-solution follow-ups. Do this in-context by default — spawning it as an isolated subagent on every practice turn isn't worth the quota cost for an ordinary session.
 
-## 2. Hint tiers — advance one tier at a time, only on request
+If the user explicitly wants a stricter, more realistic mock-interview simulation (e.g. they don't want the "interviewer" to have seen your own scratch notes or PROGRESS.md history), you can dispatch `interviewer` as a real subagent instead — say the quota tradeoff in one line before doing it, per this repo's usual rule for subagent use.
 
-Never jump tiers. Never volunteer the next tier unprompted. The user has to ask ("I'm stuck", "give me a hint") or show a genuine, specific attempt that's actually stalled — not just say "I don't know" as a first move (push back gently: "what's your first instinct, even a bad one?").
+Never write a full working solution into a `*.py` stub file yourself (no Write/Edit for that purpose). The user types their own code — that's part of what makes it stick. If a reveal is warranted, show it in your response text, not by editing their file. Every stub already has the real LeetCode problem statement and a built-in test runner (`test_<name>()`, invoked by `python3 <file>.py`) — once the user has their own code in place of `pass`, have them run it themselves first and let the tests catch mechanical bugs before you review the rest (complexity, edge cases the tests don't cover, alternative approaches).
 
-| Tier | What you give |
-|---|---|
-| 1 | A question pointing at the inefficiency or constraint they're missing (e.g. "what's the time complexity of that nested loop, and does the input size rule it out?") |
-| 2 | Name the category/pattern (e.g. "this is a sliding window problem") — no more |
-| 3 | A pseudocode outline of the approach — no real code |
-| 4 | Full working solution — **only** if the user explicitly asks for it ("just show me", "give me the solution") or has made a real attempt through tier 3 and is still stuck |
+## 2. For deep "why does this work" tangents, use dsa-algo-expert — not interviewer
 
-Track the hint tier used in PROGRESS.md (see below). If a user burns through all 4 tiers on several problems in a row, that's a signal to flag: suggest revisiting the category README's concept section before the next problem, not just plowing forward.
+If the user asks a conceptual question that goes beyond this one problem (why a technique works in general, when to reach for it, trade-offs against alternatives), dispatch it to the `dsa-algo-expert` subagent rather than answering in the interviewer persona or as the generalist Coordinator. Keep it in the background unless the answer blocks the current session, then return to the interviewer persona to continue the problem.
 
-## 3. Never write solution code into the repo yourself
+## 3. Update dsa/blind75/PROGRESS.md at the end of every exchange that changes state
 
-Do not use Write/Edit to put a full working solution into any `*.py` stub file. The user should type their own code (typing it is part of what makes it stick). Your role:
-- Discuss approach in chat.
-- If reveal is warranted (tier 4), show the solution **in your response**, not by editing their file.
-- Every stub already has the real LeetCode problem statement in its docstring and a built-in test runner (`test_<name>()`, invoked by `python3 <file>.py`) with several real examples. Once the user has their own code in place of `pass`, tell them to run the file themselves first — let the tests catch mechanical bugs before you review. Then review what's left: Big-O (ask them to state it first, then confirm/correct), edge cases the tests don't cover, and one alternative approach if relevant.
-
-## 4. For deep "why does this work" questions, use the dsa-algo-expert agent
-
-If the user asks a conceptual question that goes beyond this one problem (why a technique works in general, when to reach for it, trade-offs against alternatives), dispatch it to the `dsa-algo-expert` subagent rather than answering as the generalist Coordinator — it's the one with the teaching-focused system prompt. Keep it in the background unless the answer blocks the current session.
-
-## 5. Update dsa/blind75/PROGRESS.md at the end of every exchange that changes state
-
-Update immediately when: a problem is started, a hint tier is used, the user solves it, or the session ends. Don't batch updates and don't wait to be asked. Specifically:
+This is the skill's responsibility, not the interviewer persona's — update immediately when a problem is started, a hint tier is used, the user solves it, or the session ends. Don't batch updates and don't wait to be asked. Specifically:
 - Update `Current Session Focus` (category, problem, status, hints used, last-touched date).
 - On solve: append a row to the `History` table (date, category, problem, result, hints used, one-line note on what clicked or what to revisit), then advance `Queue` by removing the completed problem.
 - If the user abandons a problem mid-attempt, leave it `in-progress` in `Current Session Focus` so the next session resumes it — don't silently drop it into the queue.
+- If a user burns through all 4 hint tiers on several problems in a row, that's a signal to flag: suggest revisiting the category README's concept section (or a dsa-algo-expert session) before the next problem.
 
 Keep PROGRESS.md terse — it's a working state file, not a journal. One line per fact.
