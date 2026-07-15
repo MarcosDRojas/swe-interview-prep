@@ -37,18 +37,26 @@ Space Complexity Target: O(n)
 
 from typing import List
 
+# How to think about it:
+#   0. Brute force checks every pair with a nested loop (O(n^2) time,
+#      O(1) space). The pattern here is trading space for time: a hash
+#      map turns "have I seen this value before?" into an O(1) average
+#      lookup, dropping the second loop entirely -> O(n) time, O(n) space.
+#   1. Work backwards from the return type: we return indices, so anything
+#      we look up in the dict must give us back an index.
+#   2. Cache what you've directly observed (nums[i] -> i) — don't cache a
+#      derived/computed value like the complement, since there's nothing
+#      meaningful to map it to yet.
+#   3. Compute the thing you're searching for (target - x) fresh at lookup
+#      time, and check it against what's already cached.
 def two_sum(nums: List[int], target: int) -> List[int]:
-    """
-    TODO: Implement your solution here
-
-    Args:
-        nums: Array of integers
-        target: Target sum to find
-
-    Returns:
-        Indices of the two numbers that add up to target
-    """
-    pass
+    memory = {}
+    
+    for i, x in enumerate(nums):
+        bin = target - x
+        if bin in memory:
+            return [memory[bin], i]
+        memory[x] = i
 
 
 # Test Cases

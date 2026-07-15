@@ -20,7 +20,11 @@ The goal is for the **user** to produce the insight and the code. Do not fall ba
 3. If `Current Session Focus` in PROGRESS.md has a problem `in-progress`, resume that one. Otherwise pull the next item off the `Queue`.
 4. If the user names a specific problem instead, use that, but still update PROGRESS.md accordingly (see step 4 below).
 
-## 1. Run the session as the interviewer
+## 1. Recap the last solved problem before starting a new one
+
+Before presenting a new problem (not when resuming an `in-progress` one), give a brief recap of the most recent `History` row: the pattern/insight, the key "aha," and any notable bug or gotcha from the notes column. Keep it to a few bullet points — this is a refresher, not a re-teach. Skip this step if `History` is empty (first problem of the tracker) or if the user explicitly says to skip straight in.
+
+## 2. Run the session as the interviewer
 
 Adopt the persona and rules defined in `.claude/agents/interviewer.md` for the actual back-and-forth: presenting the problem, demanding clarification and a brute force before optimizing, gating hints one tier at a time, and running post-solution follow-ups. Do this in-context by default — spawning it as an isolated subagent on every practice turn isn't worth the quota cost for an ordinary session.
 
@@ -28,11 +32,11 @@ If the user explicitly wants a stricter, more realistic mock-interview simulatio
 
 Never write a full working solution into a `*.py` stub file yourself (no Write/Edit for that purpose). The user types their own code — that's part of what makes it stick. If a reveal is warranted, show it in your response text, not by editing their file. Every stub already has the real LeetCode problem statement and a built-in test runner (`test_<name>()`, invoked by `python3 <file>.py`) — once the user has their own code in place of `pass`, have them run it themselves first and let the tests catch mechanical bugs before you review the rest (complexity, edge cases the tests don't cover, alternative approaches).
 
-## 2. For deep "why does this work" tangents, use dsa-algo-expert — not interviewer
+## 3. For deep "why does this work" tangents, use dsa-algo-expert — not interviewer
 
 If the user asks a conceptual question that goes beyond this one problem (why a technique works in general, when to reach for it, trade-offs against alternatives), dispatch it to the `dsa-algo-expert` subagent rather than answering in the interviewer persona or as the generalist Coordinator. Keep it in the background unless the answer blocks the current session, then return to the interviewer persona to continue the problem.
 
-## 3. Update dsa/blind75/PROGRESS.md at the end of every exchange that changes state
+## 4. Update dsa/blind75/PROGRESS.md at the end of every exchange that changes state
 
 This is the skill's responsibility, not the interviewer persona's — update immediately when a problem is started, a hint tier is used, the user solves it, or the session ends. Don't batch updates and don't wait to be asked. Specifically:
 - Update `Current Session Focus` (category, problem, status, hints used, last-touched date).
