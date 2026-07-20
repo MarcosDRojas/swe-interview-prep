@@ -39,17 +39,29 @@ Space Complexity Target: O(n)
 
 from typing import List
 
+# How to think about it:
+#   0. Same space-for-time trade as Two Sum: brute force nested loop is
+#      O(n^2)/O(1), a hash-based structure drops it to O(n)/O(n) by
+#      answering "have I seen this before?" in O(1) average lookup.
+#   1. Set vs. dict — ask yourself: do I need to remember anything ABOUT
+#      the element (an index, a count, a first-seen position), or do I
+#      only need to know IF I've seen it before?
+#        - Only need "have I seen this value" -> set (lighter, clearer).
+#        - Need to map the value to extra info (e.g. its index, like in
+#          Two Sum) -> dict.
+#   2. This problem only asks yes/no, so nothing needs to be retrieved
+#      later — that's the tell that a set is enough, no dict required.
+#   3. Since we only need to know THAT a duplicate exists (not which ones,
+#      or how many), we can return as soon as we find one instead of
+#      scanning the rest of the array.
 def contains_duplicate(nums: List[int]) -> bool:
-    """
-    TODO: Implement your solution here
-
-    Args:
-        nums: Array of integers
-
-    Returns:
-        True if any value appears at least twice, False if all distinct
-    """
-    pass
+    membershipSet = set()
+    for x in nums:
+        if x not in membershipSet:
+            membershipSet.add(x)
+        else:
+            return True
+    return False
 
 
 # Test Cases
